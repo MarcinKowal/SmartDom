@@ -1,4 +1,13 @@
-﻿namespace SmartDom.Client
+//
+// SmartDom
+// SmartDom.Client
+// ClientCredentials.cs
+// 
+// Created by Marcin Kowal.
+// Copyright (c) 2015. All rights reserved.
+// 
+
+namespace SmartDom.Client
 {
     public class ClientCredentials
     {
