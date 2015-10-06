@@ -13,19 +13,15 @@ namespace SmartDom.Host
     using System.IO.Ports;
     using Funq;
     using Microsoft.Practices.Unity;
-    using ServiceStack.CacheAccess;
-    using ServiceStack.CacheAccess.Providers;
-    using ServiceStack.ContainerAdapter.Unity;
     using ServiceStack.Logging;
-    using ServiceStack.ServiceInterface;
-    using ServiceStack.ServiceInterface.Auth;
-    using ServiceStack.WebHost.Endpoints;
     using Service;
     using Service.Interface;
     using Service.MediaAdapters;
     using Service.DeviceLayers;
     using Service.ModbusAdapters;
-
+    using ServiceStack;
+    using ServiceStack.Auth;
+    using ServiceStack.Caching;
 
     public class AppHost : AppHostHttpListenerBase
     {
@@ -34,22 +30,21 @@ namespace SmartDom.Host
         public AppHost()
             : base("SmartDom.Host", typeof (SmartDomService).Assembly)
         {
-
             logger = LogManager.GetLogger(GetType());
         }
 
-        
         /// <summary>
         /// Starts the process host with specified url.
         /// </summary>
-        /// <param name="urlBase">The URL base.</param>
-        public override void Start(string urlBase)
+        /// <param name="urlBase">The URL.</param>
+        public override ServiceStackHost Start(string urlBase)
         {
-            logger.Info("Starting SmartDom host created: " + Environment.NewLine + urlBase);
+            logger.Info("Starting SmartDom host created: " + Environment.NewLine +  urlBase);
             logger.Info("Runtime platform: " + Platform.RuntimePlatform);
-            base.Start(urlBase);
+            return base.Start(urlBase);
         }
-
+      
+        
         /// <summary>
         /// Shut down the process host
         /// </summary>

@@ -7,10 +7,10 @@
 // Copyright (c) 2015. All rights reserved.
 // 
 
+
 namespace SmartDom.Client
 {
-    using ServiceStack.Service;
-    using ServiceStack.ServiceClient.Web;
+    using ServiceStack;
 
     public class ClientFactory : IClientFactory
     {

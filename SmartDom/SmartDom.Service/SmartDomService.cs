@@ -7,20 +7,18 @@
 // Copyright (c) 2015. All rights reserved.
 // 
 
-using SmartDom.Service.Interface.Models;
-
 namespace SmartDom.Service
 {
+    using SmartDom.Service.Interface.Models;
     using System.Collections.Generic;
     using Interface;
     using Interface.Messages;
-    using ServiceStackBase = ServiceStack.ServiceInterface.Service;
-
+   
 #if !DEBUG
     [Authenticate]
 #endif
 
-    public class SmartDomService : ServiceStackBase, ISmartDomRestService
+    public class SmartDomService : ServiceStack.Service, ISmartDomRestService
     {
         private readonly IDeviceManager deviceManager;
 

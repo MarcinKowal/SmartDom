@@ -1,4 +1,4 @@
-﻿using ServiceStack.ServiceHost;
+﻿using ServiceStack;
 using System;
 
 namespace SmartDom.Service.UnitTests

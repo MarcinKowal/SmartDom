@@ -1,6 +1,6 @@
 ﻿//
 // SmartDom
-// SmartDom.Service.Interface.Messages
+// SmartDom.Service.Interface
 // RemoveDeviceRequest.cs
 // 
 // Created by Marcin Kowal.
@@ -9,7 +9,7 @@
 
 namespace SmartDom.Service.Interface.Messages
 {
-    using ServiceStack.ServiceHost;
+    using ServiceStack;
 
     [Route("/device/{Id}", "DELETE")]
     public class RemoveDeviceRequest : IReturnVoid

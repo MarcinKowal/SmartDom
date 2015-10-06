@@ -7,9 +7,10 @@
 // Copyright (c) 2015. All rights reserved.
 // 
 
+
 namespace SmartDom.Service.Interface.Messages
 {
-    using ServiceStack.ServiceHost;
+    using ServiceStack;
 
     [Route("/devices", "GET")]
     public class GetDevicesRequest : IReturn<GetDevicesResponse>

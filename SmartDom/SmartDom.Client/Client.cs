@@ -11,8 +11,7 @@ namespace SmartDom.Client
 {
     using Service.Interface.Messages;
     using Service.Interface.Models;
-    using ServiceStack.Service;
-    using ServiceStack.ServiceHost;
+    using ServiceStack;
     using System.Collections.Generic;
     using System.Threading.Tasks;
 

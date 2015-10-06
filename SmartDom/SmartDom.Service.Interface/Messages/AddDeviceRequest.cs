@@ -7,11 +7,11 @@
 // Copyright (c) 2015. All rights reserved.
 // 
 
-using SmartDom.Service.Interface.Models;
 
 namespace SmartDom.Service.Interface.Messages
 {
-    using ServiceStack.ServiceHost;
+    using ServiceStack;
+    using Models;
 
     [Route("/device", "POST")]
     public class AddDeviceRequest : IReturnVoid

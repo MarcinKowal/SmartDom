@@ -16,6 +16,8 @@ namespace SmartDom.Service
 
     public class MessageDecoder : IMessageDecoder
     {
+        private const ushort ModbusBroadcastAddress = 0;
+
         public Device Decode(ushort[] rawMessage)
         {
             if (null == rawMessage)
@@ -26,12 +28,19 @@ namespace SmartDom.Service
 
             return new Device
             {
-                Id = (byte)rawMessage[Registry.ID_ADDR],
+                Id = DecodeDeviceId(rawMessage[Registry.ID_ADDR]),
                 Type = DecodeDeviceType(rawMessage[Registry.TYPE_ADDR]),
                 Subtype = DecodeDeviceSubtype(rawMessage[Registry.SUBTYPE_ADDR]),
-                State = DecodeDeviceState(rawMessage[Registry.RW_DIG0_ADDR]),
+                State = DecodeDeviceState(rawMessage[Registry.STATE_ADDR]),
                 TotalErrors = rawMessage[Registry.TOTAL_ERRORS_ADDR],
             };
+        }
+
+        private static ushort DecodeDeviceId(ushort deviceId)
+        {
+            if (deviceId == ModbusBroadcastAddress)
+                throw new ArgumentException("Decoded device id is reserved for broadcasting");
+            return deviceId;
         }
 
         private static DeviceState DecodeDeviceState(ushort state)

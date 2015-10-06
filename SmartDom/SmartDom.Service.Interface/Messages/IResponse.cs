@@ -7,9 +7,10 @@
 // Copyright (c) 2015. All rights reserved.
 // 
 
+
 namespace SmartDom.Service.Interface.Messages
 {
-    using ServiceStack.ServiceInterface.ServiceModel;
+    using ServiceStack;
 
     public interface IResponse<T>
     {

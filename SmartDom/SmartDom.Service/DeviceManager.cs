@@ -64,7 +64,7 @@ namespace SmartDom.Service
             try
             {
                 var data = new[] { (ushort)deviceState };
-                deviceAccessLayer.WriteToDevice(deviceId, Registry.RW_DIG0_ADDR, data);
+                deviceAccessLayer.WriteToDevice(deviceId, Registry.STATE_ADDR, data);
             }
             catch (SlaveException e)
             {

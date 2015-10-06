@@ -2,10 +2,9 @@
 using NSubstitute;
 using Ploeh.AutoFixture;
 using Ploeh.AutoFixture.AutoNSubstitute;
-using ServiceStack.Service;
 using SmartDom.Service.Interface.Messages;
-using Ploeh.AutoFixture.Kernel;
 using SmartDom.Service.Interface.Models;
+using ServiceStack;
 
 namespace SmartDom.Client.UnitTests
 {

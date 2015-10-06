@@ -16,7 +16,7 @@ namespace SmartDom.Service
         public const ushort ID_ADDR = 0;  
         public const ushort TYPE_ADDR = 1; //1 read-only from EEPROM
         public const ushort SUBTYPE_ADDR = 2; //2 read-only from EEPROM
-        public const ushort RW_DIG0_ADDR = 3; //3
+        public const ushort STATE_ADDR = 3; //3
         public const ushort RW_DIG1_ADDR = 4; //4
         public const ushort RW_DIG2_ADDR = 5; //5
         public const ushort RW_DIG3_ADDR = 6; //6

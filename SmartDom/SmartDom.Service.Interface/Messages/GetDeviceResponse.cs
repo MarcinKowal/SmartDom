@@ -7,12 +7,11 @@
 // Copyright (c) 2015. All rights reserved.
 // 
 
+using ServiceStack;
 using SmartDom.Service.Interface.Models;
 
 namespace SmartDom.Service.Interface.Messages
 {
-    using ServiceStack.ServiceInterface.ServiceModel;
-
     public class GetDeviceResponse : IResponse<Device>
     {
         public ResponseStatus ResponseStatus { get; set; }
