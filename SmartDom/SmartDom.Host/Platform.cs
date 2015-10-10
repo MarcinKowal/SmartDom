@@ -27,5 +27,15 @@ namespace SmartDom.Host
         {
             get { return Type.GetType("Mono.Runtime") != null ? true : false; }
         }
+
+        public static string ServerUri
+        {
+            get
+            {
+                return IsMonoRuntime ?
+                    "http://192.168.1.106:1337/api/" 
+                    : "http://192.168.1.53:1337/api/";
+            }
+        }
     }
 }

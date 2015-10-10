@@ -7,6 +7,8 @@
 // Copyright (c) 2015. All rights reserved.
 // 
 
+using System.Threading.Tasks;
+
 namespace SmartDom.Service.DeviceLayers
 {
     public interface IDeviceAccessLayer
@@ -18,7 +20,7 @@ namespace SmartDom.Service.DeviceLayers
         /// <param name="startReadAddress">The start read address.</param>
         /// <param name="numberOfPointsToRead">The number of points to read.</param>
         /// <returns></returns>
-        ushort[] ReadFromDevice(byte deviceId, ushort startReadAddress,
+        Task<ushort[]> ReadFromDevice(byte deviceId, ushort startReadAddress,
             ushort numberOfPointsToRead);
 
         /// <summary>
@@ -27,6 +29,6 @@ namespace SmartDom.Service.DeviceLayers
         /// <param name="deviceId">The device identifier.</param>
         /// <param name="startWriteAddress">The start write address.</param>
         /// <param name="data">The data.</param>
-        void WriteToDevice(byte deviceId, ushort startWriteAddress, ushort[] data);
+        Task WriteToDevice(byte deviceId, ushort startWriteAddress, ushort[] data);
     }
 }

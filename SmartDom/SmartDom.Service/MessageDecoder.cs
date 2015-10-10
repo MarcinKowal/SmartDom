@@ -36,11 +36,11 @@ namespace SmartDom.Service
             };
         }
 
-        private static ushort DecodeDeviceId(ushort deviceId)
+        private static byte DecodeDeviceId(ushort deviceId)
         {
             if (deviceId == ModbusBroadcastAddress)
                 throw new ArgumentException("Decoded device id is reserved for broadcasting");
-            return deviceId;
+            return (byte)deviceId;
         }
 
         private static DeviceState DecodeDeviceState(ushort state)

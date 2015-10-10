@@ -9,11 +9,14 @@
 
 namespace SmartDom.Service
 {
-    using SmartDom.Service.Interface.Models;
+    using Interface.Models;
     using System.Collections.Generic;
     using Interface;
     using Interface.Messages;
-   
+    using System.Threading.Tasks;
+    using System.Linq;
+    using System;
+
 #if !DEBUG
     [Authenticate]
 #endif
@@ -27,33 +30,48 @@ namespace SmartDom.Service
             this.deviceManager = deviceManager;
         }
 
-        public IResponse<Device> Get(GetDeviceRequest request)
+        public async Task<IResponse<Device>> Get(GetDeviceRequest request)
         {
             return new GetDeviceResponse
             {
-                Result = deviceManager.GetDevice(request.Id)
+                Result = await deviceManager.GetDevice(request.Id)
             };
         }
 
-        public IResponse<IList<Device>> Get(GetDevicesRequest request)
+        public async Task<IResponse<IList<Device>>> Get(GetDevicesRequest request)
         {
-            //var devices =  Repository.GetAll().ToList();
-            return new GetDevicesResponse { Result = new List<Device> { new Device { Id = 44}} };
+            // temporary, it will be taken from db
+            var devices = new List<Device> { new Device { Id = 1 } };
+            return new GetDevicesResponse
+            {
+                Result = await EnumerateDevicesById(devices.Select(x => x.Id))
+            };
         }
 
-        public void Post(AddDeviceRequest request)
+        private async Task<IList<Device>> EnumerateDevicesById(IEnumerable<byte> deviceIds)
         {
-            //Repository.AddDevice(request.DeviceItem);
+            var devices = new List<Device>();
+            foreach (var deviceId in deviceIds)
+            {
+                var device = await deviceManager.GetDevice(deviceId);
+                devices.Add(device);
+            }
+            return devices;
         }
 
-        public void Delete(RemoveDeviceRequest request)
+        public async Task Post(AddDeviceRequest request)
         {
-            //Repository.DeleteDevice(request.Id);
+            throw new NotImplementedException();
         }
 
-        public void Put(SetDeviceStateRequest request)
+        public async Task Delete(RemoveDeviceRequest request)
         {
-            deviceManager.SetDeviceState(request.Id, request.State);
+            throw new NotImplementedException();
+        }
+
+        public async Task Put(SetDeviceStateRequest request)
+        {
+            await deviceManager.SetDeviceState(request.Id, request.State);
         }
     }
 }

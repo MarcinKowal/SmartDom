@@ -12,14 +12,16 @@ using SmartDom.Service.Interface.Models;
 namespace SmartDom.Client
 {
     using System.Collections.Generic;
+    using System.Threading.Tasks;
 
-    public interface IClient : IAsyncClient
+    public interface IClient
     {
-        void AddDevice(Device device);
-        Device GetDevice(byte deviceId);
-        IList<Device> GetDevices();
-        void RemoveDevice(byte deviceId);
-        void SetDeviceState(byte deviceId, DeviceState deviceState);
-        DeviceState GetDeviceState(byte deviceId);
+        Task<Device> GetDeviceAsync(byte deviceId);
+        Task<IList<Device>> GetDevicesAsync();
+        Task<DeviceState> GetDeviceStateAsync(byte deviceId);
+        Task SetDeviceStateAsync(byte deviceId, DeviceState deviceState);
+
+        Task AddDeviceAsync(Device device);
+        Task RemoveDeviceAsync(byte deviceId);
     }
 }

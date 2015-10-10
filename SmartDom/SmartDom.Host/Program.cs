@@ -21,10 +21,9 @@ namespace SmartDom.Host
             LogManager.LogFactory = new NLogFactory();
             var hostFactory = new HostFactory();
 
-            var serverUri = Platform.IsMonoRuntime ? "http://192.168.1.106:1337/api/":"http://192.168.1.53:1337/api/";
             var host = hostFactory.Create();
             host.Init();
-            host.Start(serverUri);
+            host.Start(Platform.ServerUri);
             Console.ReadKey();
         }
     }

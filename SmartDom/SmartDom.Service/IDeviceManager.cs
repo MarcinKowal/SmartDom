@@ -8,12 +8,13 @@
 // 
 
 using SmartDom.Service.Interface.Models;
+using System.Threading.Tasks;
 
 namespace SmartDom.Service
 {
     public interface IDeviceManager
     {
-        Device GetDevice(byte deviceId);
-        void SetDeviceState(byte deviceId, DeviceState deviceState);
+        Task<Device> GetDevice(byte deviceId);
+        Task SetDeviceState(byte deviceId, DeviceState deviceState);
     }
 }

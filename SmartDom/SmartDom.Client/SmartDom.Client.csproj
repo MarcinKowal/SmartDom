@@ -78,7 +78,6 @@
     <Compile Include="ClientCredentials.cs" />
     <Compile Include="ClientFactory.cs" />
     <Compile Include="ClientFormat.cs" />
-    <Compile Include="IAsyncClient.cs" />
     <Compile Include="IClient.cs" />
     <Compile Include="IClientFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -12,6 +12,7 @@ namespace SmartDom.Service.DeviceLayers
     using MediaAdapters;
     using ModbusAdapters;
     using System.IO.Ports;
+    using System.Threading.Tasks;
 
     public class SerialAccessLayer: IDeviceAccessLayer
     {
@@ -37,14 +38,14 @@ namespace SmartDom.Service.DeviceLayers
         /// <param name="startReadAddress">The start read address.</param>
         /// <param name="numberOfPointsToRead">The number of points to read.</param>
         /// <returns></returns>
-        public ushort[] ReadFromDevice(byte deviceId, ushort startReadAddress,
+        public async Task<ushort[]> ReadFromDevice(byte deviceId, ushort startReadAddress,
             ushort numberOfPointsToRead)
         {
             using (var mediaAdapter = mediaAdapterFactory.Create())
             {
                 using (var device = modbusMasterFactory.Create(mediaAdapter))
                 {
-                    return device.ReadHoldingRegisters(deviceId, startReadAddress, numberOfPointsToRead);
+                    return await device.ReadHoldingRegistersAsync(deviceId, startReadAddress, numberOfPointsToRead);
                 }
             }
         }
@@ -55,13 +56,13 @@ namespace SmartDom.Service.DeviceLayers
         /// <param name="deviceId">The device identifier.</param>
         /// <param name="startWriteAddress">The start write address.</param>
         /// <param name="data">The data.</param>
-        public void WriteToDevice(byte deviceId, ushort startWriteAddress, ushort[] data)
+        public async Task WriteToDevice(byte deviceId, ushort startWriteAddress, ushort[] data)
         {
             using (var mediaAdapter = mediaAdapterFactory.Create())
             {
                  using (var device = modbusMasterFactory.Create(mediaAdapter))
                 {
-                    device.WriteMultipleRegisters(deviceId, startWriteAddress, data);
+                    await device.WriteMultipleRegistersAsync(deviceId, startWriteAddress, data);
                 }
             }
         }

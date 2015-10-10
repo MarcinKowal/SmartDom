@@ -12,10 +12,11 @@
 namespace SmartDom.Service
 {
     using DeviceLayers;
-    using Interface.Models; 
+    using Interface.Models;
     using Modbus;
     using ServiceStack.Logging;
     using System;
+    using System.Threading.Tasks;
 
     public class DeviceManager : IDeviceManager
     {
@@ -39,12 +40,12 @@ namespace SmartDom.Service
         /// </summary>
         /// <param name="deviceId">The device identifier.</param>
         /// <returns></returns>
-        public Device GetDevice(byte deviceId)
+        public async Task<Device> GetDevice(byte deviceId)
         {
             ushort[] receivedData;
             try
             {
-                receivedData = deviceAccessLayer.ReadFromDevice(deviceId, Registry.ID_ADDR, Registry.TOTAL_REGS_SIZE);
+                receivedData = await deviceAccessLayer.ReadFromDevice(deviceId, Registry.ID_ADDR, Registry.TOTAL_REGS_SIZE);
             }
             catch (SlaveException e)
             {
@@ -59,12 +60,12 @@ namespace SmartDom.Service
 
             return messageDecoder.Decode(receivedData);
         }
-        public void SetDeviceState(byte deviceId, DeviceState deviceState)
+        public async Task SetDeviceState(byte deviceId, DeviceState deviceState)
         {
             try
             {
                 var data = new[] { (ushort)deviceState };
-                deviceAccessLayer.WriteToDevice(deviceId, Registry.STATE_ADDR, data);
+                await deviceAccessLayer.WriteToDevice(deviceId, Registry.STATE_ADDR, data);
             }
             catch (SlaveException e)
             {

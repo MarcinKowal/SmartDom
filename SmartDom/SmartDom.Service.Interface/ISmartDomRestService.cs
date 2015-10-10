@@ -7,19 +7,19 @@
 // Copyright (c) 2015. All rights reserved.
 // 
 
-using SmartDom.Service.Interface.Models;
-
 namespace SmartDom.Service.Interface
 {
-    using System.Collections.Generic;
     using Messages;
+    using Models;
+    using System.Collections.Generic;
+    using System.Threading.Tasks;
 
     public interface ISmartDomRestService
     {
-        IResponse<Device> Get(GetDeviceRequest request);
-        IResponse<IList<Device>> Get(GetDevicesRequest request);
-        void Post(AddDeviceRequest request);
-        void Delete(RemoveDeviceRequest request);
-        void Put(SetDeviceStateRequest request);
+        Task<IResponse<Device>> Get(GetDeviceRequest request);
+        Task<IResponse<IList<Device>>> Get(GetDevicesRequest request);
+        Task Post(AddDeviceRequest request);
+        Task Delete(RemoveDeviceRequest request);
+        Task Put(SetDeviceStateRequest request);
     }
 }
