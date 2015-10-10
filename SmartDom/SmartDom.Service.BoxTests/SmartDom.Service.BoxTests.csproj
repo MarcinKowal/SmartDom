@@ -127,6 +127,10 @@
       <Project>{716e2af5-1eca-4861-9a91-b07334689fdb}</Project>
       <Name>SmartDom.Client</Name>
     </ProjectReference>
+    <ProjectReference Include="..\SmartDom.Host\SmartDom.Host.csproj">
+      <Project>{c7c3ce9e-4a47-430e-8c9d-f41c4b690df6}</Project>
+      <Name>SmartDom.Host</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SmartDom.Service.Interface\SmartDom.Service.Interface.csproj">
       <Project>{c9baa93e-b462-4a9e-9703-8ec36c384cf8}</Project>
       <Name>SmartDom.Service.Interface</Name>

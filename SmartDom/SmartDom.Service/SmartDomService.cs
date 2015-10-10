@@ -34,7 +34,7 @@ namespace SmartDom.Service
         {
             return new GetDeviceResponse
             {
-                Result = await deviceManager.GetDevice(request.Id)
+                Result = await deviceManager.GetDeviceAsync(request.Id)
             };
         }
 
@@ -46,17 +46,6 @@ namespace SmartDom.Service
             {
                 Result = await EnumerateDevicesById(devices.Select(x => x.Id))
             };
-        }
-
-        private async Task<IList<Device>> EnumerateDevicesById(IEnumerable<byte> deviceIds)
-        {
-            var devices = new List<Device>();
-            foreach (var deviceId in deviceIds)
-            {
-                var device = await deviceManager.GetDevice(deviceId);
-                devices.Add(device);
-            }
-            return devices;
         }
 
         public async Task Post(AddDeviceRequest request)
@@ -71,7 +60,18 @@ namespace SmartDom.Service
 
         public async Task Put(SetDeviceStateRequest request)
         {
-            await deviceManager.SetDeviceState(request.Id, request.State);
+            await deviceManager.SetDeviceStateAsync(request.Id, request.State);
+        }
+
+        private async Task<IList<Device>> EnumerateDevicesById(IEnumerable<byte> deviceIds)
+        {
+            var devices = new List<Device>();
+            foreach (var deviceId in deviceIds)
+            {
+                var device = await deviceManager.GetDeviceAsync(deviceId);
+                devices.Add(device);
+            }
+            return devices;
         }
     }
 }

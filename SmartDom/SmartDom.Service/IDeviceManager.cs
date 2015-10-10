@@ -7,14 +7,15 @@
 // Copyright (c) 2015. All rights reserved.
 // 
 
-using SmartDom.Service.Interface.Models;
-using System.Threading.Tasks;
 
 namespace SmartDom.Service
 {
+    using Interface.Models;
+    using System.Threading.Tasks;
+
     public interface IDeviceManager
     {
-        Task<Device> GetDevice(byte deviceId);
-        Task SetDeviceState(byte deviceId, DeviceState deviceState);
+        Task<Device> GetDeviceAsync(byte deviceId);
+        Task SetDeviceStateAsync(byte deviceId, DeviceState deviceState);
     }
 }

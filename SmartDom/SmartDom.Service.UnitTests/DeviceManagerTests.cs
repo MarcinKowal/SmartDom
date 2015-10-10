@@ -35,11 +35,11 @@ namespace SmartDom.Service.UnitTests
             var deviceId = fixture.Create<byte>();
            
             //act
-            cut.GetDevice(deviceId);
+            cut.GetDeviceAsync(deviceId);
 
             //assert
             deviceAccessLayerMock.Received()
-                .ReadFromDevice(deviceId, Registry.ID_ADDR,
+                .ReadFromDeviceAsync(deviceId, Registry.ID_ADDR,
                 Registry.TOTAL_REGS_SIZE);
         }
 
@@ -50,11 +50,11 @@ namespace SmartDom.Service.UnitTests
             var receivedData = fixture.CreateMany(Registry.TOTAL_REGS_SIZE)
                 .ToArray();
 
-            deviceAccessLayerMock.ReadFromDevice(deviceId, Registry.ID_ADDR,
+            deviceAccessLayerMock.ReadFromDeviceAsync(deviceId, Registry.ID_ADDR,
                 Registry.TOTAL_REGS_SIZE).Returns(receivedData);
 
             //act
-            cut.GetDevice(deviceId);
+            cut.GetDeviceAsync(deviceId);
 
             //assert 
             messageDecoderMock.Received(1)
@@ -68,11 +68,11 @@ namespace SmartDom.Service.UnitTests
 
             var receivedData = fixture.CreateMany<ushort>(Registry.TOTAL_REGS_SIZE).ToArray();
 
-            deviceAccessLayerMock.ReadFromDevice(deviceId, Arg.Any<byte>(),
+            deviceAccessLayerMock.ReadFromDeviceAsync(deviceId, Arg.Any<byte>(),
                Arg.Any<byte>()).Returns(receivedData);
 
             //act
-            cut.GetDevice(deviceId);
+            cut.GetDeviceAsync(deviceId);
 
             //assert 
             messageDecoderMock.Received(1).Decode(Arg.Any<ushort[]>());    
@@ -87,11 +87,11 @@ namespace SmartDom.Service.UnitTests
             var receivedData = fixture.CreateMany<ushort>(dataLenth).ToArray();
 
 
-            deviceAccessLayerMock.ReadFromDevice(Arg.Any<byte>(), Arg.Any<byte>(),
+            deviceAccessLayerMock.ReadFromDeviceAsync(Arg.Any<byte>(), Arg.Any<byte>(),
                Arg.Any<byte>()).Returns(receivedData);
 
             //act
-            cut.GetDevice(deviceId);
+            cut.GetDeviceAsync(deviceId);
 
             //assert 
             messageDecoderMock.Received(1).Decode(Arg.Any<ushort[]>());

@@ -38,7 +38,7 @@ namespace SmartDom.Service.DeviceLayers
         /// <param name="startReadAddress">The start read address.</param>
         /// <param name="numberOfPointsToRead">The number of points to read.</param>
         /// <returns></returns>
-        public async Task<ushort[]> ReadFromDevice(byte deviceId, ushort startReadAddress,
+        public async Task<ushort[]> ReadFromDeviceAsync(byte deviceId, ushort startReadAddress,
             ushort numberOfPointsToRead)
         {
             using (var mediaAdapter = mediaAdapterFactory.Create())
@@ -56,7 +56,7 @@ namespace SmartDom.Service.DeviceLayers
         /// <param name="deviceId">The device identifier.</param>
         /// <param name="startWriteAddress">The start write address.</param>
         /// <param name="data">The data.</param>
-        public async Task WriteToDevice(byte deviceId, ushort startWriteAddress, ushort[] data)
+        public async Task WriteToDeviceAsync(byte deviceId, ushort startWriteAddress, ushort[] data)
         {
             using (var mediaAdapter = mediaAdapterFactory.Create())
             {

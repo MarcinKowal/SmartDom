@@ -20,7 +20,7 @@ namespace SmartDom.Service.DeviceLayers
         /// <param name="startReadAddress">The start read address.</param>
         /// <param name="numberOfPointsToRead">The number of points to read.</param>
         /// <returns></returns>
-        Task<ushort[]> ReadFromDevice(byte deviceId, ushort startReadAddress,
+        Task<ushort[]> ReadFromDeviceAsync(byte deviceId, ushort startReadAddress,
             ushort numberOfPointsToRead);
 
         /// <summary>
@@ -29,6 +29,6 @@ namespace SmartDom.Service.DeviceLayers
         /// <param name="deviceId">The device identifier.</param>
         /// <param name="startWriteAddress">The start write address.</param>
         /// <param name="data">The data.</param>
-        Task WriteToDevice(byte deviceId, ushort startWriteAddress, ushort[] data);
+        Task WriteToDeviceAsync(byte deviceId, ushort startWriteAddress, ushort[] data);
     }
 }
