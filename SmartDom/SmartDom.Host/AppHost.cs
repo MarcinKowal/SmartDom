@@ -22,6 +22,9 @@ namespace SmartDom.Host
     using ServiceStack;
     using ServiceStack.Auth;
     using ServiceStack.Caching;
+    using ServiceStack.Data;
+    using ServiceStack.OrmLite;
+    using IoC;
 
     public class AppHost : AppHostHttpListenerBase
     {
@@ -56,7 +59,10 @@ namespace SmartDom.Host
 
         public override void Configure(Container container)
         {
-            var unityContainer = new UnityContainer();
+            var unityContainer = new UnityContainer()
+              .AddNewExtension<BuildTracking>()
+              .AddNewExtension<LogCreation>();
+            
             var userRepository = new InMemoryAuthRepository();
 
             Plugins.Add(new AuthFeature(() => new AuthUserSession(),
@@ -67,6 +73,7 @@ namespace SmartDom.Host
             unityContainer.RegisterInstance<ICacheClient>(new MemoryCacheClient());
             unityContainer.RegisterInstance<IUserAuthRepository>(userRepository);
 
+     
 
             unityContainer.RegisterType<IConfigurationRepository, AppConfigRepository>();
             unityContainer.RegisterType<MediaAdapterAbstractFactory<SerialPort>, SerialPortAdapterFactory>(new ContainerControlledLifetimeManager());
@@ -74,7 +81,7 @@ namespace SmartDom.Host
             unityContainer.RegisterType<IDeviceAccessLayer, SerialAccessLayer>(new ContainerControlledLifetimeManager());
             unityContainer.RegisterType<IMessageDecoder, MessageDecoder>();
             unityContainer.RegisterType<IDeviceManager, DeviceManager>();
-            
+
             var unityAdapter = new UnityContainerAdapter(unityContainer);
             container.Adapter = unityAdapter;
 

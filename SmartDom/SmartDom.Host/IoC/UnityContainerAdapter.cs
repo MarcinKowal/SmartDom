@@ -8,7 +8,7 @@
 // Copyright (c) 2015. All rights reserved.
 //  
 #endregion
-namespace SmartDom.Host
+namespace SmartDom.Host.IoC
 {
     using Microsoft.Practices.Unity;
     using ServiceStack.Configuration;

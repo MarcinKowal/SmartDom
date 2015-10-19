@@ -22,19 +22,19 @@ namespace SmartDom.Service
     {
         private readonly IDeviceAccessLayer deviceAccessLayer;
         private readonly IMessageDecoder messageDecoder;
-        private static readonly ILog Logger = LogManager.GetLogger(typeof(DeviceManager));
-      
+        private readonly ILog logger;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="DeviceManager"/> class.
         /// </summary>
         /// <param name="deviceAccessLayer">The device access layer.</param>
         /// <param name="messageDecoder">The message decoder.</param>
-        public DeviceManager(IDeviceAccessLayer deviceAccessLayer, IMessageDecoder messageDecoder)
+        public DeviceManager(IDeviceAccessLayer deviceAccessLayer, IMessageDecoder messageDecoder, ILog logger)
         {
             this.deviceAccessLayer = deviceAccessLayer;
             this.messageDecoder = messageDecoder;
+            this.logger = logger;
         }
-
         /// <summary>
         /// Gets the device.
         /// </summary>
@@ -49,12 +49,12 @@ namespace SmartDom.Service
             }
             catch (SlaveException e)
             {
-                Logger.Error(string.Format("Unable to retrieve device {0}. Exception occured {1}", deviceId, e));
+                logger.Error(string.Format("Unable to retrieve device {0}. Exception occured {1}", deviceId, e));
                 throw new DeviceException("Unable to communicate with device with ID= " + deviceId);
             }
             catch (TimeoutException e)
             {
-                Logger.Error(string.Format("Unable to retrieve device {0}. Exception occured {1}", deviceId, e));
+                logger.Error(string.Format("Unable to retrieve device {0}. Exception occured {1}", deviceId, e));
                 throw new DeviceException("Unable to communicate with device with ID= " + deviceId);
             }
 
@@ -69,12 +69,12 @@ namespace SmartDom.Service
             }
             catch (SlaveException e)
             {
-                Logger.Error(string.Format("Unable to set state of device {0} to {1}. Exception occured {2}", deviceId, deviceState, e));
+                logger.Error(string.Format("Unable to set state of device {0} to {1}. Exception occured {2}", deviceId, deviceState, e));
                 throw new DeviceException("Unable to communicate with device with ID= " + deviceId);
             }
             catch (TimeoutException e)
             {
-                Logger.Error(string.Format("Unable to set state of device {0} to {1}. Exception occured {2}", deviceId, deviceState, e));
+                logger.Error(string.Format("Unable to set state of device {0} to {1}. Exception occured {2}", deviceId, deviceState, e));
                 throw new DeviceException("Unable to communicate with device with ID= " + deviceId);
             }
         }
