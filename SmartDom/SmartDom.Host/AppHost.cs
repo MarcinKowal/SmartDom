@@ -25,6 +25,10 @@ namespace SmartDom.Host
     using ServiceStack.Data;
     using ServiceStack.OrmLite;
     using IoC;
+    using Service.Database;
+    using ServiceStack.OrmLite.Sqlite;
+
+    using SmartDom.Service.Interface.Models;
 
     public class AppHost : AppHostHttpListenerBase
     {
@@ -73,11 +77,15 @@ namespace SmartDom.Host
             unityContainer.RegisterInstance<ICacheClient>(new MemoryCacheClient());
             unityContainer.RegisterInstance<IUserAuthRepository>(userRepository);
 
-     
+            unityContainer.RegisterInstance<IDbConnectionFactory>(new OrmLiteConnectionFactory("~/Database/SmartDom.db".MapServerPath(), 
+                SqliteOrmLiteDialectProvider.Instance));
 
+            unityContainer.RegisterType<IOrmWrapper, OrmWrapper>();
             unityContainer.RegisterType<IConfigurationRepository, AppConfigRepository>();
             unityContainer.RegisterType<MediaAdapterAbstractFactory<SerialPort>, SerialPortAdapterFactory>(new ContainerControlledLifetimeManager());
             unityContainer.RegisterType<ModbusMasterAbstractFactory<SerialPort>, RtuSerialModbusMasterFactory>(new ContainerControlledLifetimeManager());
+            unityContainer.RegisterType<IGenericRepository<Device>, DeviceDbRepository>(new ContainerControlledLifetimeManager(),
+                new InjectionMethod("Initialize"));
             unityContainer.RegisterType<IDeviceAccessLayer, SerialAccessLayer>(new ContainerControlledLifetimeManager());
             unityContainer.RegisterType<IMessageDecoder, MessageDecoder>();
             unityContainer.RegisterType<IDeviceManager, DeviceManager>();

@@ -25,6 +25,7 @@
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
     <RunCodeAnalysis>true</RunCodeAnalysis>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -35,6 +36,7 @@
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
     <RunCodeAnalysis>true</RunCodeAnalysis>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Mono.Data.Sqlite, Version=2.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
@@ -86,8 +88,11 @@
     <Reference Include="System.Data" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Database\DeviceRepository.cs" />
-    <Compile Include="Database\IRepository.cs" />
+    <Compile Include="Database\DeviceDbRepository.cs" />
+    <Compile Include="Database\GenericDbRepository.cs" />
+    <Compile Include="Database\IGenericRepository.cs" />
+    <Compile Include="Database\IOrmWrapper.cs" />
+    <Compile Include="Database\OrmWrapper.cs" />
     <Compile Include="DeviceLayers\IDeviceAccessLayer.cs" />
     <Compile Include="IMessageDecoder.cs" />
     <Compile Include="MediaAdapters\MediaAbstractAdapter.cs" />
@@ -108,7 +113,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="Database\SmartDom.db" />
+    <Content Include="Database\SmartDom.db">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>

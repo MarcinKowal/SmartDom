@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using SmartDom.Client;
 using SmartDom.Service.Interface.Models;
 using SmartDom.Host;

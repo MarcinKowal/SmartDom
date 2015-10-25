@@ -16,6 +16,11 @@ namespace SmartDom.Service
     using System.Threading.Tasks;
     using System.Linq;
     using System;
+    using System.Net;
+
+    using Database;
+
+    using ServiceStack;
 
 #if !DEBUG
     [Authenticate]
@@ -24,27 +29,38 @@ namespace SmartDom.Service
     public class SmartDomService : ServiceStack.Service, ISmartDomRestService
     {
         private readonly IDeviceManager deviceManager;
+        private readonly IGenericRepository<Device> deviceRepository;
 
-        public SmartDomService(IDeviceManager deviceManager)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SmartDomService"/> class.
+        /// </summary>
+        /// <param name="deviceManager">The device manager.</param>
+        /// <param name="deviceRepository">The device repository.</param>
+        public SmartDomService(IDeviceManager deviceManager, IGenericRepository<Device> deviceRepository)
         {
             this.deviceManager = deviceManager;
+            this.deviceRepository = deviceRepository;
         }
 
         public async Task<IResponse<Device>> Get(GetDeviceRequest request)
         {
-            return new GetDeviceResponse
+            var deviceExist = await this.deviceRepository.ExistAsync(x => x.Id == request.Id);
+            if (!deviceExist)
             {
-                Result = await deviceManager.GetDeviceAsync(request.Id)
-            };
+                throw new HttpError(HttpStatusCode.NotFound, "");
+            }
+            var device = await this.deviceManager.GetDeviceAsync(request.Id);
+            return new GetDeviceResponse { Result = device };
         }
 
         public async Task<IResponse<IList<Device>>> Get(GetDevicesRequest request)
         {
             // temporary, it will be taken from db
+            var de = await this.deviceRepository.GetAllAsync();
             var devices = new List<Device> { new Device { Id = 1 } };
             return new GetDevicesResponse
             {
-                Result = await EnumerateDevicesById(devices.Select(x => x.Id))
+                Result = await this.EnumerateDevicesById(devices.Select(x => x.Id))
             };
         }
 
@@ -60,7 +76,7 @@ namespace SmartDom.Service
 
         public async Task Put(SetDeviceStateRequest request)
         {
-            await deviceManager.SetDeviceStateAsync(request.Id, request.State);
+            await this.deviceManager.SetDeviceStateAsync(request.Id, request.State);
         }
 
         private async Task<IList<Device>> EnumerateDevicesById(IEnumerable<byte> deviceIds)
@@ -68,7 +84,7 @@ namespace SmartDom.Service
             var devices = new List<Device>();
             foreach (var deviceId in deviceIds)
             {
-                var device = await deviceManager.GetDeviceAsync(deviceId);
+                var device = await this.deviceManager.GetDeviceAsync(deviceId);
                 devices.Add(device);
             }
             return devices;

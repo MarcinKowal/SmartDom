@@ -12,7 +12,7 @@ using ServiceStack.Host.HttpListener;
 
 namespace SmartDom.Host
 {
-    public interface IHostFactory<T> where T : HttpListenerBase
+    public interface IHostFactory<out T> where T : HttpListenerBase
     {
         T Create();
     }
