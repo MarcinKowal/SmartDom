@@ -76,6 +76,11 @@ namespace SmartDom.Service
 
         public async Task Put(SetDeviceStateRequest request)
         {
+            var deviceExist = await this.deviceRepository.ExistAsync(x => x.Id == request.Id);
+            if (!deviceExist)
+            {
+                throw new HttpError(HttpStatusCode.NotFound, "");
+            }
             await this.deviceManager.SetDeviceStateAsync(request.Id, request.State);
         }
 

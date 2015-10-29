@@ -8,6 +8,8 @@
 
 namespace SmartDom.Service.UnitTests
 {
+    using System;
+    using System.Linq.Expressions;
     using System.Threading.Tasks;
 
     using NSubstitute;
@@ -68,9 +70,40 @@ namespace SmartDom.Service.UnitTests
         {
             var request = this.fixture.Create<GetDeviceRequest>();
 
-            this.repository.ExistAsync(x => false)
-                .ReturnsForAnyArgs(Task.FromResult(false));
+            this.repository.ExistAsync(x => false).ReturnsForAnyArgs(Task.FromResult(false));
             await this.cut.Get(request);
+        }
+
+
+        [Test]
+        [ExpectedException(typeof(HttpError))]
+        public async Task ShallThrowHttpNotFoundWhenDeviceDoesNotExistOnSetDeviceState()
+        {
+            //arrange
+            var request = this.fixture.Create<SetDeviceStateRequest>();
+            this.repository.ExistAsync(x => false).ReturnsForAnyArgs(Task.FromResult(false));
+
+            //act
+            await this.cut.Put(request);
+        }
+
+        [Test]
+        public async Task ShallIInvokeSetDeviceStateOnManagerWhenDeviceExistOnSetDeviceState()
+        {
+            //arrange
+            var request = this.fixture.Create<SetDeviceStateRequest>();
+            Expression<Func<Device, bool>> expression = x => x.Id == request.Id;
+            this.repository.
+                ExistAsync(Arg.Is<Expression<Func<Device, bool>>>(x => x == expression))
+                .Returns(Task.FromResult(true));
+
+            //act
+            await this.cut.Put(request);
+
+            //assert
+            await this.deviceManager.Received(1).
+                SetDeviceStateAsync(request.Id, request.State);
+
         }
     }
 }
