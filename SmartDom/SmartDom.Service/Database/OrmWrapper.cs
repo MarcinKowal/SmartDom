@@ -48,9 +48,33 @@ namespace SmartDom.Service.Database
         }
 
 
+        /// <summary>
+        /// Selects item asynchronously
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="dbConnection">The database connection.</param>
+        /// <returns></returns>
         public async Task<List<T>> SelectAsync<T>(IDbConnection dbConnection)
         {
             return await dbConnection.SelectAsync<T>();
-        } 
+        }
+
+        public async Task<List<T>> SelectAsync<T>(IDbConnection dbConnection, Expression<Func<T, bool>> query)
+        {
+            return await dbConnection.SelectAsync(query);
+        }
+
+        /// <summary>
+        /// Inserts items asynchronously
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="dbConnection">The database connection.</param>
+        /// <param name="item">The item.</param>
+        /// <returns></returns>
+        public async Task InsertAsync<T>(IDbConnection dbConnection, T item)
+        {
+            await dbConnection.InsertAsync(item);
+        }
+
     }
 }

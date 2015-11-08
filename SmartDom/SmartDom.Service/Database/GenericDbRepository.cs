@@ -77,6 +77,26 @@ namespace SmartDom.Service.Database
             return new List<T>();
         }
 
+        public Task<List<T>> GetAllAsync(Expression<Func<T, bool>> query)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task InsertAsync(T item)
+        {
+            try
+            {
+                using (var connection = this.DbConnectionFactory.OpenDbConnection())
+                {
+                    await this.OrmWrapper.InsertAsync(connection, item);
+                }
+            }
+            catch (Exception e)
+            {
+                this.Logger.Error(e);
+            }
+        }
+
         /// <summary>
         /// Initializes this instance.
         /// </summary>

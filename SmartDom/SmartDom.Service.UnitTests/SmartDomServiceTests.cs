@@ -10,6 +10,7 @@ namespace SmartDom.Service.UnitTests
 {
     using System;
     using System.Linq.Expressions;
+    using System.Net;
     using System.Threading.Tasks;
 
     using NSubstitute;
@@ -71,7 +72,15 @@ namespace SmartDom.Service.UnitTests
             var request = this.fixture.Create<GetDeviceRequest>();
 
             this.repository.ExistAsync(x => false).ReturnsForAnyArgs(Task.FromResult(false));
-            await this.cut.Get(request);
+            try
+            {
+                await this.cut.Get(request);
+            }
+            catch (HttpError e)
+            {
+                Assert.AreEqual(HttpStatusCode.NotFound,e.StatusCode);
+                throw;
+            }
         }
 
 
@@ -103,7 +112,42 @@ namespace SmartDom.Service.UnitTests
             //assert
             await this.deviceManager.Received(1).
                 SetDeviceStateAsync(request.Id, request.State);
+        }
 
+        [Test]
+        public async Task ShallInvokeAddDeviceOnRepository()
+        {
+            //arrange
+            var request = this.fixture.Create<AddDeviceRequest>();
+            this.repository.ExistAsync(x => false)
+               .ReturnsForAnyArgs(Task.FromResult(false));
+
+            //act
+            await this.cut.Post(request);
+
+            //assert
+            await this.repository.Received(1).InsertAsync(request.Device);
+
+        }
+
+        [Test]
+        [ExpectedException(typeof(HttpError))]
+        public async Task ShallThrowHttpConflictWhenDeviceExistsOnAddDevice()
+        {
+            //arrange
+            var request = this.fixture.Create<AddDeviceRequest>();
+            this.repository.ExistAsync(x => false)
+                .ReturnsForAnyArgs(Task.FromResult(true));
+            try
+            {
+                //act
+                await this.cut.Post(request);
+            }
+            catch (HttpError e)
+            {
+                Assert.AreEqual(HttpStatusCode.Conflict,e.StatusCode);
+                throw;
+            }
         }
     }
 }

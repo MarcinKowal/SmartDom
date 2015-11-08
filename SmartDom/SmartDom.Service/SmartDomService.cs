@@ -1,38 +1,37 @@
-﻿//
-// SmartDom
+﻿// SmartDom
 // SmartDom.Service
 // SmartDomService.cs
-// 
+//  
 // Created by Marcin Kowal.
 // Copyright (c) 2015. All rights reserved.
-// 
+//  
 
 namespace SmartDom.Service
 {
-    using Interface.Models;
-    using System.Collections.Generic;
-    using Interface;
-    using Interface.Messages;
-    using System.Threading.Tasks;
-    using System.Linq;
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Net;
-
-    using Database;
+    using System.Threading.Tasks;
 
     using ServiceStack;
+
+    using SmartDom.Service.Database;
+    using SmartDom.Service.Interface;
+    using SmartDom.Service.Interface.Messages;
+    using SmartDom.Service.Interface.Models;
 
 #if !DEBUG
     [Authenticate]
 #endif
 
-    public class SmartDomService : ServiceStack.Service, ISmartDomRestService
+    public class SmartDomService : Service, ISmartDomRestService
     {
         private readonly IDeviceManager deviceManager;
         private readonly IGenericRepository<Device> deviceRepository;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SmartDomService"/> class.
+        ///     Initializes a new instance of the <see cref="SmartDomService" /> class.
         /// </summary>
         /// <param name="deviceManager">The device manager.</param>
         /// <param name="deviceRepository">The device repository.</param>
@@ -58,15 +57,18 @@ namespace SmartDom.Service
             // temporary, it will be taken from db
             var de = await this.deviceRepository.GetAllAsync();
             var devices = new List<Device> { new Device { Id = 1 } };
-            return new GetDevicesResponse
-            {
-                Result = await this.EnumerateDevicesById(devices.Select(x => x.Id))
-            };
+            return new GetDevicesResponse { Result = await this.EnumerateDevicesById(devices.Select(x => x.Id)) };
         }
 
         public async Task Post(AddDeviceRequest request)
         {
-            throw new NotImplementedException();
+            var alreadyExist = await this.deviceRepository
+                .ExistAsync(x => x.Id == request.Device.Id);
+            if (alreadyExist)
+            {
+                throw new HttpError(HttpStatusCode.Conflict,"");
+            }
+            await this.deviceRepository.InsertAsync(request.Device);
         }
 
         public async Task Delete(RemoveDeviceRequest request)

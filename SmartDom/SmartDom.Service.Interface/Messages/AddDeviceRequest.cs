@@ -16,6 +16,6 @@ namespace SmartDom.Service.Interface.Messages
     [Route("/device", "POST")]
     public class AddDeviceRequest : IReturnVoid
     {
-        public Device DeviceItem { get; set; }
+        public Device Device { get; set; }
     }
 }

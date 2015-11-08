@@ -12,7 +12,6 @@ namespace SmartDom.Host
     using System;
     using ServiceStack.Logging;
     using ServiceStack.Logging.NLogger;
-    using SmartDom.Service;
 
     class Program
     {

@@ -24,41 +24,41 @@ namespace SmartDom.Client
 
     public class Client : IClient
     {
-        private readonly IRestClientAsync restClientAsync;
+        private readonly IRestClientAsync restClient;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Client"/> class.
         /// </summary>
-        /// <param name="restClientAsync"></param>
+        /// <param name="restClient"></param>
         /// clientFactory
-        internal Client(IRestClientAsync restClientAsync)
+        internal Client(IRestClientAsync restClient)
         {
-            this.restClientAsync = restClientAsync;
+            this.restClient = restClient;
         }
 
         public async Task<Device> GetDeviceAsync(byte deviceId)
         {
             var request = new GetDeviceRequest { Id = deviceId };
-            var response = await restClientAsync.GetAsync(request);
+            var response = await this.restClient.GetAsync(request);
             return response != null ? response.Result : null;
         }
         
         public async Task<IList<Device>> GetDevicesAsync()
         {
-           var response = await restClientAsync.GetAsync(new GetDevicesRequest());
+           var response = await this.restClient.GetAsync(new GetDevicesRequest());
            return response != null ? response.Result : null;     
         }
 
         public async Task SetDeviceStateAsync(byte deviceId, DeviceState deviceState)
         {
-            await restClientAsync.PutAsync(
+            await this.restClient.PutAsync(
                 new SetDeviceStateRequest
                 { Id = deviceId, State = deviceState });
         }
 
         public async Task<DeviceState> GetDeviceStateAsync(byte deviceId)
         {
-            var response = await restClientAsync.GetAsync(new GetDeviceRequest { Id = deviceId });
+            var response = await this.restClient.GetAsync(new GetDeviceRequest { Id = deviceId });
             return response.Result.State;
         }
 
@@ -77,7 +77,8 @@ namespace SmartDom.Client
         /// <param name="device">The device.</param>
         public async Task AddDeviceAsync(Device device)
         {
-            throw new NotImplementedException();
+            var request = new AddDeviceRequest { Device = device };
+            await this.restClient.PostAsync(request);
         }
     }
 }

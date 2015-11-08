@@ -8,7 +8,9 @@
 
 namespace SmartDom.Service.UnitTests
 {
+    using System.Collections.Generic;
     using System.Linq;
+    using System.Linq.Expressions;
     using System.Threading.Tasks;
 
     using NUnit.Framework;
@@ -29,7 +31,6 @@ namespace SmartDom.Service.UnitTests
         private IGenericRepository<Device> cut;
         private IFixture fixture;
         private IDbConnectionFactory dbFactory;
-
         private IOrmWrapper ormWrapper;
 
         [SetUp]
@@ -109,6 +110,24 @@ namespace SmartDom.Service.UnitTests
 
             //assert
             Assert.That(receivedDevices, Is.EquivalentTo(expectedDevices));
+        }
+
+        [Test]
+        public async Task ShallInsertDevice()
+        {
+            //arrange
+            var device = this.fixture.Create<Device>();
+
+            //act 
+            await this.cut.InsertAsync(device);
+
+            //assert
+            using (var db = this.dbFactory.Open())
+            {
+                var selectedDevices = await db.SelectAsync<Device>(x => x.Id == device.Id);
+                Assert.AreEqual(selectedDevices.Count, 1);
+                Assert.AreEqual(device,selectedDevices[0]);
+            }
         }
     }
 }

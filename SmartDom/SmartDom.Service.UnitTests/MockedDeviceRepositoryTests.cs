@@ -100,5 +100,29 @@ namespace SmartDom.Service.UnitTests
             Assert.AreEqual(0, receivedDevices.Count);
             this.logger.Received().Error(Arg.Is(exception));
         }
+
+        [Test]
+        public async Task ShallInvokeLoggerWhenExceptionOnInsertAsync()
+        {
+            //arrange
+            var exception = this.fx.Create<Exception>();
+            var device = this.fx.Create<Device>();
+            this.ormWrapper.InsertAsync(this.dbConnection, Arg.Any<Device>())
+                .ThrowsForAnyArgs(exception);
+
+            this.dbFactory.Open().Returns(x => this.dbConnection);
+
+            this.fx.Inject(this.dbFactory);
+            this.fx.Inject(this.logger);
+            this.fx.Inject(this.ormWrapper);
+
+            var cut = this.fx.Create<DeviceDbRepository>();
+
+            //act
+            await cut.InsertAsync(device);
+
+            //assert
+            this.logger.Received().Error(Arg.Is(exception));
+        }
     }
 }

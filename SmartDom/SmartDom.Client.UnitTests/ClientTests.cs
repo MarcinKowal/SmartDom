@@ -83,12 +83,11 @@ namespace SmartDom.Client.UnitTests
         }
 
         [Test]
-        [Ignore("todo method not implemented yet")]
         public void ShallInvokePostWithGivenDevice()
         {
             var device = this.fixture.Create<Device>();
             this.cut.AddDeviceAsync(device);
-            this.restClientMock.Received(1).PostAsync(Arg.Is<AddDeviceRequest>(x => x.DeviceItem.Equals(device)));
+            this.restClientMock.Received(1).PostAsync(Arg.Is<AddDeviceRequest>(x => x.Device.Equals(device)));
         }
 
         [Test]

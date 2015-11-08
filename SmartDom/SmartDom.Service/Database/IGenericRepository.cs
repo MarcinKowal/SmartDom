@@ -28,5 +28,9 @@ namespace SmartDom.Service.Database
         /// </summary>
         /// <returns></returns>
         Task<List<T>> GetAllAsync();
+
+        Task<List<T>> GetAllAsync(Expression<Func<T, bool>> query);
+
+        Task InsertAsync(T item);
     }
 }

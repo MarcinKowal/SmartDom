@@ -1,57 +1,77 @@
-﻿using NUnit.Framework;
-using SmartDom.Client;
-using SmartDom.Service.Interface.Models;
-using SmartDom.Host;
+﻿// SmartDom
+// SmartDom.Service.BoxTests
+// ServiceApiTests.cs
+//  
+// Created by Marcin Kowal.
+// Copyright (c) 2015. All rights reserved.
+//  
 
 namespace SmartDom.Service.BoxTests
 {
+    using NUnit.Framework;
+
+    using SmartDom.Client;
+    using SmartDom.Host;
+    using SmartDom.Service.Interface.Models;
+
     [TestFixture]
     public class ServiceApiTests
     {
-        private IClientFactory clientFactory;
-        private IClient client;
-
-        
         [SetUp]
         public void Init()
         {
             this.clientFactory = new ClientFactory();
 
-            var clientCredentials = new ClientCredentials("test","test");
-            client = clientFactory.Create(Platform.ServerUri, ClientFormat.Json, clientCredentials);
+            var clientCredentials = new ClientCredentials("test", "test");
+            this.client = this.clientFactory.Create(Platform.ServerUri, ClientFormat.Json, clientCredentials);
         }
 
-        [Test]
-        public async void ShallReturnAllDevices()
-        {
-            var devices = await client.GetDevicesAsync();
-            Assert.IsNotNull(devices);
-        }
+        private IClientFactory clientFactory;
 
-        [Test]
-        public async void ShallReturnDeviceWithGivenId()
-        {
-            const byte DeviceId = 1;
-            var device = await client.GetDeviceAsync(DeviceId);
-            Assert.IsNotNull(device);
-            Assert.AreEqual(DeviceId, device.Id);
-        }
+        private IClient client;
 
         [Test]
         public async void ShallChangeStateOfGivenDevice()
         {
             const byte DeviceId = 1;
             var expectedState = DeviceState.Enabled;
-            await client.SetDeviceStateAsync(DeviceId, expectedState);
-            var currentState = await client.GetDeviceStateAsync(DeviceId);
+            var device = new Device { Id = DeviceId };
+            await this.client.AddDeviceAsync(device);
+            await this.client.SetDeviceStateAsync(DeviceId, expectedState);
+            var currentState = await this.client.GetDeviceStateAsync(DeviceId);
 
             Assert.AreEqual(expectedState, currentState);
 
             expectedState = DeviceState.Disabled;
-            await client.SetDeviceStateAsync(DeviceId, expectedState);
-            currentState = currentState = await client.GetDeviceStateAsync(DeviceId);
+            await this.client.SetDeviceStateAsync(DeviceId, expectedState);
+            currentState = await this.client.GetDeviceStateAsync(DeviceId);
 
             Assert.AreEqual(expectedState, currentState);
+        }
+
+        [Test]
+        public async void ShallReturnAllDevices()
+        {
+            const byte DeviceId = 1;
+            var devices = await this.client.GetDevicesAsync();
+            Assert.IsNotNull(devices);
+            Assert.AreEqual(0,devices.Count);
+
+            var device = new Device { Id = DeviceId };
+            await this.client.AddDeviceAsync(device);
+            devices = await this.client.GetDevicesAsync();
+            Assert.IsNotNull(devices);
+            Assert.AreEqual(1,devices.Count);
+        }
+
+        [Test]
+        public async void ShallReturnDeviceWithGivenId()
+        {
+            const byte DeviceId = 1;
+            await this.client.AddDeviceAsync(new Device { Id = DeviceId });
+            var device = await this.client.GetDeviceAsync(DeviceId);
+            Assert.IsNotNull(device);
+            Assert.AreEqual(DeviceId, device.Id);
         }
     }
 }
