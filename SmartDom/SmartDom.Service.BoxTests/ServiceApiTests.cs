@@ -73,5 +73,8 @@ namespace SmartDom.Service.BoxTests
             Assert.IsNotNull(device);
             Assert.AreEqual(DeviceId, device.Id);
         }
+
+
+
     }
 }

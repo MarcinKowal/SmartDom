@@ -9,6 +9,8 @@
 namespace SmartDom.Service.UnitTests
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Linq.Expressions;
     using System.Net;
     using System.Threading.Tasks;
@@ -22,9 +24,9 @@ namespace SmartDom.Service.UnitTests
 
     using ServiceStack;
 
-    using SmartDom.Service.Database;
-    using SmartDom.Service.Interface.Messages;
-    using SmartDom.Service.Interface.Models;
+    using Database;
+    using Interface.Messages;
+    using Interface.Models;
 
     [TestFixture]
     public class SmartDomServiceTests
@@ -132,7 +134,7 @@ namespace SmartDom.Service.UnitTests
 
         [Test]
         [ExpectedException(typeof(HttpError))]
-        public async Task ShallThrowHttpConflictWhenDeviceExistsOnAddDevice()
+        public async Task ShallThrowHttpConflictWhenDeviceExistsOnAddDeviceRequest()
         {
             //arrange
             var request = this.fixture.Create<AddDeviceRequest>();
@@ -147,6 +149,65 @@ namespace SmartDom.Service.UnitTests
             {
                 Assert.AreEqual(HttpStatusCode.Conflict,e.StatusCode);
                 throw;
+            }
+        }
+
+        [Test]
+        public async Task ShallInvokeRemoveOnDeviceRepositoryOnRemoveDeviceRequest()
+        {
+            //arrange
+            var request = this.fixture.Create<RemoveDeviceRequest>();
+         
+            //act
+            await this.cut.Delete(request);
+
+            //assert
+             await this.repository.Received(1)
+                .DeleteAsync(Arg.Any<Expression<Func<Device,bool>>>());
+        }
+
+
+        [Test]
+        public async Task ShallNotEnumerateDevicesWhenRepositoryIsEmptyOnGetDevicesRequest()
+        {
+            //arrange
+            var request = this.fixture.Create<GetDevicesRequest>();
+            this.repository.GetAllAsync()
+                .Returns(Task.FromResult(new List<Device>()));
+
+            //act
+            var response = await this.cut.Get(request);
+
+            //assert
+            Assert.IsNotNull(response);
+            Assert.IsNotNull(response.Result);
+            Assert.AreEqual(0,response.Result.Count);
+            await this.deviceManager.DidNotReceiveWithAnyArgs()
+                .GetDeviceAsync(Arg.Any<byte>());
+        }
+
+        [Test]
+        public async Task ShallEnumarateAllDevicesOnGetDevicesRequest()
+        {
+            //arrange
+            var devices = this.fixture.CreateMany<Device>().ToList();
+            var ids = devices.Select(x => x.Id);
+            var request = this.fixture.Create<GetDevicesRequest>();
+            this.repository.GetAllAsync()
+                .Returns(Task.FromResult(devices));
+
+            //act
+            var response = await this.cut.Get(request);
+
+            //assert
+            Assert.IsNotNull(response);
+            Assert.IsNotNull(response.Result);
+            Assert.AreEqual(devices.Count, response.Result.Count);
+
+            foreach (var deviceId in ids)
+            {
+                await this.deviceManager.Received(1)
+                    .GetDeviceAsync(deviceId);
             }
         }
     }

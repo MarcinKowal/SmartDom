@@ -8,6 +8,7 @@
 
 namespace SmartDom.Service.UnitTests
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Linq.Expressions;
@@ -92,10 +93,10 @@ namespace SmartDom.Service.UnitTests
         }
 
         [Test]
-        public async Task ShallReturnAllDevicesFromDb()
+        public async Task ShallReturnAllDevicesWithoutFilter()
         {
             //arrange
-            var expectedDevices = this.fixture.CreateMany<Device>(1).ToList();
+            var expectedDevices = this.fixture.CreateMany<Device>(10).ToList();
             
             using (var db = this.dbFactory.Open())
             {
@@ -113,6 +114,42 @@ namespace SmartDom.Service.UnitTests
         }
 
         [Test]
+        public async Task ShallReturnAllDevicesWithStateFilter()
+        {
+            //arrange
+            var enabledDevice = this.fixture
+                .Build<Device>().With(x => x.State, DeviceState.Enabled)
+                .Create();
+
+            var disabledDevice = this.fixture
+                .Build<Device>().With(x => x.State, DeviceState.Disabled)
+                .Create();
+
+            var disabledDevice2 = this.fixture
+                .Build<Device>().With(x => x.State, DeviceState.Disabled)
+                .Create();
+
+            var expectedDevices = new List<Device> { disabledDevice, enabledDevice, disabledDevice2 };
+
+            using (var db = this.dbFactory.Open())
+            {
+                foreach (var device in expectedDevices)
+                {
+                    db.Insert(device);
+                }
+            }
+
+            //act
+            var receivedDevices = await this.cut.GetAllAsync(x => x.State == DeviceState.Disabled);
+
+            //assert
+            Assert.IsNotNull(receivedDevices);
+            Assert.AreEqual(2, receivedDevices.Count);
+            Assert.Contains(disabledDevice, receivedDevices);
+            Assert.Contains(disabledDevice2, receivedDevices);
+        }
+
+        [Test]
         public async Task ShallInsertDevice()
         {
             //arrange
@@ -127,6 +164,42 @@ namespace SmartDom.Service.UnitTests
                 var selectedDevices = await db.SelectAsync<Device>(x => x.Id == device.Id);
                 Assert.AreEqual(selectedDevices.Count, 1);
                 Assert.AreEqual(device,selectedDevices[0]);
+            }
+        }
+
+        [Test]
+        public async Task ShallRemoveDevicesWithFilter()
+        {
+            //arrange 
+            var devices = this.fixture.CreateMany(new Device { State = DeviceState.Enabled}).ToList();
+            var enabledDevicesCount = devices.Count;
+            devices.AddRange(this.fixture.CreateMany(new Device { State = DeviceState.Disabled }).ToList());
+            Expression<Func<Device, bool>> disabledDevicesFilter
+                = x => x.State == DeviceState.Disabled;
+
+            using (var db = this.dbFactory.Open())
+            {
+                foreach (var device in devices)
+                {
+                    db.Insert(device);
+                }
+
+                var totalCount = await db.CountAsync<Device>();
+                Assert.AreEqual(devices.Count, totalCount);
+
+                //act
+                var removedCount = await this.cut.DeleteAsync(disabledDevicesFilter);
+
+                //assert
+                Assert.AreEqual(totalCount - enabledDevicesCount, removedCount);
+                var remainingDevices = db.Select<Device>();
+                Assert.IsFalse(remainingDevices
+                    .Any(x => x.State == DeviceState.Disabled));
+
+                Assert.AreEqual(enabledDevicesCount,remainingDevices.Count);
+                Assert.IsTrue(remainingDevices
+                                .All(x => x.State != DeviceState.Disabled));
+
             }
         }
     }

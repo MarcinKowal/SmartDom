@@ -52,5 +52,14 @@ namespace SmartDom.Service.Database
         /// <param name="dbConnection">The database connection.</param>
         /// <returns></returns>
         Task<List<T>> SelectAsync<T>(IDbConnection dbConnection);
+
+        /// <summary>
+        /// Removes items asynchronously
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="dbConnection">The database connection.</param>
+        /// <param name="filterExpression">The filter expression.</param>
+        /// <returns></returns>
+        Task<int> DeleteAsync<T>(IDbConnection dbConnection, Expression<Func<T, bool>> filterExpression);
     }
 }

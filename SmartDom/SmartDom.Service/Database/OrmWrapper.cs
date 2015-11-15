@@ -76,5 +76,16 @@ namespace SmartDom.Service.Database
             await dbConnection.InsertAsync(item);
         }
 
+        /// <summary>
+        /// Removes items asynchronously
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="dbConnection">The database connection.</param>
+        /// <param name="filterExpression">The filter expression.</param>
+        /// <returns></returns>
+        public async Task<int> DeleteAsync<T>(IDbConnection dbConnection, Expression<Func<T, bool>> filterExpression)
+        {
+            return await dbConnection.DeleteAsync(filterExpression);
+        }
     }
 }

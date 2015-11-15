@@ -69,10 +69,10 @@ namespace SmartDom.Host
             
             var userRepository = new InMemoryAuthRepository();
 
-            Plugins.Add(new AuthFeature(() => new AuthUserSession(),
+            this.Plugins.Add(new AuthFeature(() => new AuthUserSession(),
               new IAuthProvider[] { new BasicAuthProvider()}));
 
-            Plugins.Add(new RegistrationFeature());
+            this.Plugins.Add(new RegistrationFeature());
            
             unityContainer.RegisterInstance<ICacheClient>(new MemoryCacheClient());
             unityContainer.RegisterInstance<IUserAuthRepository>(userRepository);
@@ -95,24 +95,29 @@ namespace SmartDom.Host
 
 
 
+            AddUser(userRepository);
+        }
+
+        private static void AddUser(IUserAuthRepository userRepository)
+        {
             //Add a user for testing purposes
             string hash;
             string salt;
             new SaltedHash().GetHashAndSaltString("test", out hash, out salt);
-            
-            userRepository.CreateUserAuth(new UserAuth
-            {
-                Id = 1,
-                DisplayName = "DisplayName",
-                Email = "as@if.com",
-                UserName = "test",
-                FirstName = "FirstName",
-                LastName = "LastName",
-                PasswordHash = hash,
-                Salt = salt,
-            }, "test");
 
-
+            userRepository.CreateUserAuth(
+                new UserAuth
+                    {
+                        Id = 1,
+                        DisplayName = "DisplayName",
+                        Email = "as@if.com",
+                        UserName = "test",
+                        FirstName = "FirstName",
+                        LastName = "LastName",
+                        PasswordHash = hash,
+                        Salt = salt,
+                    },
+                "test");
         }
     }
 }

@@ -77,9 +77,20 @@ namespace SmartDom.Service.Database
             return new List<T>();
         }
 
-        public Task<List<T>> GetAllAsync(Expression<Func<T, bool>> query)
+        public async Task<List<T>> GetAllAsync(Expression<Func<T, bool>> query)
         {
-            throw new NotImplementedException();
+            try
+            {
+                using (var connection = this.DbConnectionFactory.OpenDbConnection())
+                {
+                    return await this.OrmWrapper.SelectAsync(connection, query);
+                }
+            }
+            catch (Exception e)
+            {
+                this.Logger.Error(e);
+            }
+            return new List<T>();
         }
 
         public async Task InsertAsync(T item)
@@ -95,6 +106,22 @@ namespace SmartDom.Service.Database
             {
                 this.Logger.Error(e);
             }
+        }
+
+        public async Task<int> DeleteAsync(Expression<Func<T, bool>> filterExpression)
+        {
+            try
+            {
+                using (var connection = this.DbConnectionFactory.OpenDbConnection())
+                {
+                    return await this.OrmWrapper.DeleteAsync(connection, filterExpression);
+                }
+            }
+            catch (Exception e)
+            {
+                this.Logger.Error(e);
+            }
+            return 0;
         }
 
         /// <summary>

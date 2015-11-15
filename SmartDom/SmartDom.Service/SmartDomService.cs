@@ -43,7 +43,8 @@ namespace SmartDom.Service
 
         public async Task<IResponse<Device>> Get(GetDeviceRequest request)
         {
-            var deviceExist = await this.deviceRepository.ExistAsync(x => x.Id == request.Id);
+            var deviceExist = await this.deviceRepository
+                .ExistAsync(x => x.Id == request.Id);
             if (!deviceExist)
             {
                 throw new HttpError(HttpStatusCode.NotFound, "");
@@ -54,10 +55,12 @@ namespace SmartDom.Service
 
         public async Task<IResponse<IList<Device>>> Get(GetDevicesRequest request)
         {
-            // temporary, it will be taken from db
-            var de = await this.deviceRepository.GetAllAsync();
-            var devices = new List<Device> { new Device { Id = 1 } };
-            return new GetDevicesResponse { Result = await this.EnumerateDevicesById(devices.Select(x => x.Id)) };
+           var devices = await this.deviceRepository.GetAllAsync();
+            
+            return new GetDevicesResponse
+                       {
+                           Result = await this.EnumerateDeviceStateById(devices.Select(x => x.Id))
+                       };
         }
 
         public async Task Post(AddDeviceRequest request)
@@ -73,12 +76,13 @@ namespace SmartDom.Service
 
         public async Task Delete(RemoveDeviceRequest request)
         {
-            throw new NotImplementedException();
+            await this.deviceRepository.DeleteAsync(x => x.Id == request.Id);
         }
 
         public async Task Put(SetDeviceStateRequest request)
         {
-            var deviceExist = await this.deviceRepository.ExistAsync(x => x.Id == request.Id);
+            var deviceExist = await this.deviceRepository
+                .ExistAsync(x => x.Id == request.Id);
             if (!deviceExist)
             {
                 throw new HttpError(HttpStatusCode.NotFound, "");
@@ -86,7 +90,11 @@ namespace SmartDom.Service
             await this.deviceManager.SetDeviceStateAsync(request.Id, request.State);
         }
 
-        private async Task<IList<Device>> EnumerateDevicesById(IEnumerable<byte> deviceIds)
+        /// <summary>
+        /// Enumerates the device state by identifier.
+        /// </summary>
+        /// <param name="deviceIds">The device ids.</param>
+        private async Task<IList<Device>> EnumerateDeviceStateById(IEnumerable<byte> deviceIds)
         {
             var devices = new List<Device>();
             foreach (var deviceId in deviceIds)

@@ -32,5 +32,8 @@ namespace SmartDom.Service.Database
         Task<List<T>> GetAllAsync(Expression<Func<T, bool>> query);
 
         Task InsertAsync(T item);
+
+        Task<int> DeleteAsync(Expression<Func<T, bool>> filterExpression);
+
     }
 }
