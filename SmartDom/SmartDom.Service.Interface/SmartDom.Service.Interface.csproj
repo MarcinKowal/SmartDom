@@ -77,6 +77,7 @@
     <Compile Include="IConfigurationRepository.cs" />
     <Compile Include="ISmartDomRestService.cs" />
     <Compile Include="Messages\AddDeviceRequest.cs" />
+    <Compile Include="Messages\AddDeviceResponse.cs" />
     <Compile Include="Messages\GetDeviceRequest.cs" />
     <Compile Include="Messages\GetDeviceResponse.cs" />
     <Compile Include="Messages\GetDevicesRequest.cs" />

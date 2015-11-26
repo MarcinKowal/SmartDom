@@ -85,9 +85,18 @@ namespace SmartDom.Client.UnitTests
         [Test]
         public void ShallInvokePostWithGivenDevice()
         {
-            var device = this.fixture.Create<Device>();
-            this.cut.AddDeviceAsync(device);
-            this.restClientMock.Received(1).PostAsync(Arg.Is<AddDeviceRequest>(x => x.Device.Equals(device)));
+            //arrange
+            var deviceId = this.fixture.Create<byte>();
+            var deviceType = this.fixture.Create<DeviceType>();
+            var deviceSubtype = this.fixture.Create<DeviceSubtype>();
+
+            //act
+            this.cut.AddDeviceAsync(deviceId, deviceType, deviceSubtype);
+
+            //assert
+            this.restClientMock.Received(1)
+                .PostAsync(Arg.Is<AddDeviceRequest>(x => x.DeviceId == deviceId 
+                && x.DeviceType == deviceType && x.DeviceSubType == deviceSubtype));
         }
 
         [Test]
@@ -104,6 +113,21 @@ namespace SmartDom.Client.UnitTests
             await
                 this.restClientMock.Received(1)
                     .PutAsync(Arg.Is<SetDeviceStateRequest>(x => x.Id.Equals(deviceId) && x.State.Equals(deviceState)));
+        }
+
+        [Test]
+        public async Task ShallInvokeRemoveWithGivenDeviceState()
+        {
+            //arrange
+            var deviceId = this.fixture.Create<byte>();
+          
+            //act
+            await this.cut.RemoveDeviceAsync(deviceId);
+
+            //assert
+            await
+                this.restClientMock.Received(1)
+                    .DeleteAsync(Arg.Is<RemoveDeviceRequest>(x => x.Id.Equals(deviceId)));
         }
     }
 }

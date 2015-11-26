@@ -103,6 +103,7 @@
     <Compile Include="ModbusAdapters\ModbusMasterAbstractFactory.cs" />
     <Compile Include="ModbusAdapters\RtuSerialModbusMasterFactory.cs" />
     <Compile Include="DeviceLayers\SerialAccessLayer.cs" />
+    <Compile Include="ResponseFactory.cs" />
     <Compile Include="SmartDomService.cs" />
     <Compile Include="DeviceManager.cs" />
     <Compile Include="IDeviceManager.cs" />

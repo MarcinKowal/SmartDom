@@ -24,7 +24,7 @@ namespace SmartDom.Service.Interface.Models
 
     public enum DeviceState : ushort
     {
-       // Unknown = 0,
+        Unknown = 0,
         Disabled = 1,
         Enabled = 2,
     }

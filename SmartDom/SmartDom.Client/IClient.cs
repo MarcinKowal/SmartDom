@@ -21,7 +21,7 @@ namespace SmartDom.Client
         Task<DeviceState> GetDeviceStateAsync(byte deviceId);
         Task SetDeviceStateAsync(byte deviceId, DeviceState deviceState);
 
-        Task AddDeviceAsync(Device device);
+        Task<Device> AddDeviceAsync(byte deviceId, DeviceType deviceType, DeviceSubtype deviceSubtype);
         Task RemoveDeviceAsync(byte deviceId);
     }
 }

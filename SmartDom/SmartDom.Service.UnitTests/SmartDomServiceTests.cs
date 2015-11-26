@@ -128,7 +128,11 @@ namespace SmartDom.Service.UnitTests
             await this.cut.Post(request);
 
             //assert
-            await this.repository.Received(1).InsertAsync(request.Device);
+            await this.repository
+                .Received(1)
+                .InsertAsync(Arg.Is<Device>(x=> x.Id == request.DeviceId 
+                && x.Type == request.DeviceType
+                && x.Subtype == request.DeviceSubType));
 
         }
 

@@ -68,17 +68,23 @@ namespace SmartDom.Client
         /// <param name="deviceId">The device identifier.</param>
         public async Task RemoveDeviceAsync(byte deviceId)
         {
-            throw new NotImplementedException();
+            var request = new RemoveDeviceRequest{ Id = deviceId };
+            await this.restClient.DeleteAsync(request);
         }
 
         /// <summary>
         /// Adds the device.
         /// </summary>
-        /// <param name="device">The device.</param>
-        public async Task AddDeviceAsync(Device device)
+        public async Task<Device> AddDeviceAsync(byte deviceId, DeviceType deviceType, DeviceSubtype deviceSubtype)
         {
-            var request = new AddDeviceRequest { Device = device };
-            await this.restClient.PostAsync(request);
+            var request = new AddDeviceRequest
+                              {
+                                  DeviceId = deviceId,
+                                  DeviceType = deviceType,
+                                  DeviceSubType = deviceSubtype
+                              };
+            var response = await this.restClient.PostAsync(request);
+            return response.Result;
         }
     }
 }

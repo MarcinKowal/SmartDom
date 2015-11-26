@@ -32,7 +32,7 @@ namespace SmartDom.Service.Interface
         /// Handles asynchronously HTTP POST with specified request.
         /// </summary>
         /// <param name="request">The request.</param>
-        Task Post(AddDeviceRequest request);
+        Task<IResponse<Device>> Post(AddDeviceRequest request);
      
         /// <summary>
         /// Handles asynchronously HTTP DELETE with specified request.

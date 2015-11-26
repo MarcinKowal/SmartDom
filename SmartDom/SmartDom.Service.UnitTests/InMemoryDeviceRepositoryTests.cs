@@ -37,7 +37,8 @@ namespace SmartDom.Service.UnitTests
         [SetUp]
         public void Init()
         {
-            this.fixture = new Fixture().Customize(new AutoNSubstituteCustomization());
+            this.fixture = new Fixture()
+                .Customize(new AutoNSubstituteCustomization());
 
             this.dbFactory = new OrmLiteConnectionFactory(
                 connectionString: ":memory:",
@@ -49,7 +50,7 @@ namespace SmartDom.Service.UnitTests
 
             using (var db = this.dbFactory.Open())
             {
-                db.CreateTableIfNotExists<Device>();
+                db.CreateTable<Device>(true);
             }
         }
 
@@ -171,9 +172,15 @@ namespace SmartDom.Service.UnitTests
         public async Task ShallRemoveDevicesWithFilter()
         {
             //arrange 
-            var devices = this.fixture.CreateMany(new Device { State = DeviceState.Enabled}).ToList();
-            var enabledDevicesCount = devices.Count;
-            devices.AddRange(this.fixture.CreateMany(new Device { State = DeviceState.Disabled }).ToList());
+            var devicesGenerator = new Fixture().Create<Generator<Device>>();
+            fixture.Customize<Device>(c => c.Without(x => x.State));
+            fixture.Customize<IEnumerable<Device>>(
+                c =>
+                c.FromFactory(
+                    () => Enum.GetValues(typeof(DeviceState)).Cast<DeviceState>()
+                              .Select(s => devicesGenerator.First(u => u.State == s))));
+
+            var devices = fixture.Create<IEnumerable<Device>>(); // returns devices with all supported states
             Expression<Func<Device, bool>> disabledDevicesFilter
                 = x => x.State == DeviceState.Disabled;
 
@@ -185,21 +192,16 @@ namespace SmartDom.Service.UnitTests
                 }
 
                 var totalCount = await db.CountAsync<Device>();
-                Assert.AreEqual(devices.Count, totalCount);
+                Assert.AreEqual(devices.Count(), totalCount);
 
                 //act
                 var removedCount = await this.cut.DeleteAsync(disabledDevicesFilter);
 
                 //assert
-                Assert.AreEqual(totalCount - enabledDevicesCount, removedCount);
+                Assert.AreEqual(1, removedCount);
                 var remainingDevices = db.Select<Device>();
                 Assert.IsFalse(remainingDevices
                     .Any(x => x.State == DeviceState.Disabled));
-
-                Assert.AreEqual(enabledDevicesCount,remainingDevices.Count);
-                Assert.IsTrue(remainingDevices
-                                .All(x => x.State != DeviceState.Disabled));
-
             }
         }
     }

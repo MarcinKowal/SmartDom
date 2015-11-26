@@ -49,29 +49,37 @@ namespace SmartDom.Service
             {
                 throw new HttpError(HttpStatusCode.NotFound, "");
             }
-            var device = await this.deviceManager.GetDeviceAsync(request.Id);
-            return new GetDeviceResponse { Result = device };
+          
+            return
+                ResponseFactory.CreateResponse<GetDeviceResponse, Device>(
+                    await this.deviceManager.GetDeviceAsync(request.Id));
         }
 
         public async Task<IResponse<IList<Device>>> Get(GetDevicesRequest request)
         {
-           var devices = await this.deviceRepository.GetAllAsync();
-            
-            return new GetDevicesResponse
-                       {
-                           Result = await this.EnumerateDeviceStateById(devices.Select(x => x.Id))
-                       };
+            var devices = await this.deviceRepository.GetAllAsync();
+
+            return
+                ResponseFactory.CreateResponse<GetDevicesResponse, IList<Device>>(
+                    await this.EnumerateDeviceStateById(devices.Select(x => x.Id)));
         }
 
-        public async Task Post(AddDeviceRequest request)
+        public async Task<IResponse<Device>> Post(AddDeviceRequest request)
         {
             var alreadyExist = await this.deviceRepository
-                .ExistAsync(x => x.Id == request.Device.Id);
+                .ExistAsync(x => x.Id == request.DeviceId);
             if (alreadyExist)
             {
-                throw new HttpError(HttpStatusCode.Conflict,"");
+                throw HttpError.Conflict(string.Format("Device with ID {0} already exists",request.DeviceId));
             }
-            await this.deviceRepository.InsertAsync(request.Device);
+            var device = new Device
+                             {
+                                 Id = request.DeviceId,
+                                 Type = request.DeviceType,
+                                 Subtype = request.DeviceSubType
+                             };
+            await this.deviceRepository.InsertAsync(device);
+            return ResponseFactory.CreateResponse<AddDeviceResponse,Device>(device);
         }
 
         public async Task Delete(RemoveDeviceRequest request)

@@ -8,6 +8,8 @@
 
 namespace SmartDom.Service.BoxTests
 {
+    using System.Threading.Tasks;
+
     using NUnit.Framework;
 
     using SmartDom.Client;
@@ -17,6 +19,7 @@ namespace SmartDom.Service.BoxTests
     [TestFixture]
     public class ServiceApiTests
     {
+        private const byte DeviceId = 1;
         [SetUp]
         public void Init()
         {
@@ -33,32 +36,34 @@ namespace SmartDom.Service.BoxTests
         [Test]
         public async void ShallChangeStateOfGivenDevice()
         {
-            const byte DeviceId = 1;
             var expectedState = DeviceState.Enabled;
-            var device = new Device { Id = DeviceId };
-            await this.client.AddDeviceAsync(device);
-            await this.client.SetDeviceStateAsync(DeviceId, expectedState);
-            var currentState = await this.client.GetDeviceStateAsync(DeviceId);
+
+            var device = await this.AddDevice();
+
+            await this.client.SetDeviceStateAsync(device.Id, expectedState);
+            var currentState = await this.client.GetDeviceStateAsync(device.Id);
 
             Assert.AreEqual(expectedState, currentState);
 
             expectedState = DeviceState.Disabled;
-            await this.client.SetDeviceStateAsync(DeviceId, expectedState);
-            currentState = await this.client.GetDeviceStateAsync(DeviceId);
+            await this.client.SetDeviceStateAsync(device.Id, expectedState);
+            currentState = await this.client.GetDeviceStateAsync(device.Id);
 
             Assert.AreEqual(expectedState, currentState);
+
+            await this.client.RemoveDeviceAsync(device.Id);
+            var receivedDevices = await this.client.GetDevicesAsync();
+            Assert.AreEqual(0,receivedDevices.Count);
         }
 
         [Test]
         public async void ShallReturnAllDevices()
         {
-            const byte DeviceId = 1;
             var devices = await this.client.GetDevicesAsync();
             Assert.IsNotNull(devices);
             Assert.AreEqual(0,devices.Count);
 
-            var device = new Device { Id = DeviceId };
-            await this.client.AddDeviceAsync(device);
+            var device = await this.AddDevice();
             devices = await this.client.GetDevicesAsync();
             Assert.IsNotNull(devices);
             Assert.AreEqual(1,devices.Count);
@@ -67,14 +72,16 @@ namespace SmartDom.Service.BoxTests
         [Test]
         public async void ShallReturnDeviceWithGivenId()
         {
-            const byte DeviceId = 1;
-            await this.client.AddDeviceAsync(new Device { Id = DeviceId });
-            var device = await this.client.GetDeviceAsync(DeviceId);
+            var addedDevice = await this.AddDevice();
+            var device = await this.client.GetDeviceAsync(addedDevice.Id);
             Assert.IsNotNull(device);
             Assert.AreEqual(DeviceId, device.Id);
         }
 
-
+        private async Task<Device> AddDevice()
+        {
+            return await this.client.AddDeviceAsync(DeviceId, DeviceType.Switch, DeviceSubtype.Digital);
+        }
 
     }
 }
